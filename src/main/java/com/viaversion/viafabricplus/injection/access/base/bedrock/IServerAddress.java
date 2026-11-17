@@ -21,12 +21,12 @@
 
 package com.viaversion.viafabricplus.injection.access.base.bedrock;
 
-import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
+import java.net.SocketAddress;
 
 public interface IServerAddress {
 
-    NetherNetAddress viaFabricPlus$getNetherNetAddress();
+    SocketAddress viaFabricPlus$getNetherNetAddress();
 
-    void viaFabricPlus$setNetherNetAddress(final NetherNetAddress address);
+    void viaFabricPlus$setNetherNetAddress(final SocketAddress address);
 
 }
