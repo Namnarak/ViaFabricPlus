@@ -1,9 +1,6 @@
 /*
  * This file is part of ViaFabricPlus - https://github.com/ViaVersion/ViaFabricPlus
- * Copyright (C) 2021-2026 the original authors
- *                         - Florian Reuth <git@florianreuth.de>
- *                         - RK_01/RaphiMC
- * Copyright (C) 2023-2026 ViaVersion and contributors
+ * Copyright (C) 2021-2026 the original authors and ViaVersion contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +20,19 @@ package com.viaversion.viafabricplus.injection.mixin.base.connection.bedrock;
 
 import com.viaversion.viafabricplus.base.bedrock.NetherNetInetSocketAddress;
 import com.viaversion.viafabricplus.injection.access.base.bedrock.IServerAddress;
-import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.Optional;
 import net.minecraft.client.multiplayer.resolver.ResolvedServerAddress;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
+import net.minecraft.client.multiplayer.resolver.ServerAddressResolver;
 import net.minecraft.client.multiplayer.resolver.ServerNameResolver;
+import net.raphimc.viabedrock.api.BedrockProtocolVersion;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -37,24 +40,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ServerNameResolver.class)
 public abstract class MixinServerNameResolver {
 
+    @Shadow
+    @Final
+    private ServerAddressResolver resolver;
+
     @Inject(method = "resolveAddress", at = @At("HEAD"), cancellable = true)
-    private void returnNetherNetAddressEarly(ServerAddress serverAddress, CallbackInfoReturnable<Optional<ResolvedServerAddress>> cir) {
-        if ((Object) serverAddress instanceof IServerAddress mixinServerAddress && mixinServerAddress.viaFabricPlus$getNetherNetAddress() != null) {
-            final NetherNetAddress netherNetAddress = mixinServerAddress.viaFabricPlus$getNetherNetAddress();
+    private void returnNetherNetAddressEarly(final ServerAddress serverAddress, final CallbackInfoReturnable<Optional<ResolvedServerAddress>> cir) {
+        final SocketAddress netherNetAddress = ((IServerAddress) (Object) serverAddress).viaFabricPlus$getNetherNetAddress();
+        if (netherNetAddress != null) {
             cir.setReturnValue(Optional.of(new ResolvedServerAddress() {
                 @Override
                 public String getHostName() {
-                    return netherNetAddress.getNetworkId();
+                    return netherNetAddress instanceof NetherNetAddress xboxAddress ? xboxAddress.getNetworkId() : netherNetAddress.toString();
                 }
 
                 @Override
                 public String getHostIp() {
-                    return netherNetAddress.getNetworkId();
+                    return netherNetAddress.toString();
                 }
 
                 @Override
                 public int getPort() {
-                    return 0;
+                    return netherNetAddress instanceof com.viaversion.viafabricplus.base.bedrock.NetherNetLanAddress lanAddress
+                        ? lanAddress.port()
+                        : 0;
                 }
 
                 @Override
@@ -62,6 +71,9 @@ public abstract class MixinServerNameResolver {
                     return new NetherNetInetSocketAddress(netherNetAddress);
                 }
             }));
+        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
+            // NetherNet addresses do not use Java SRV lookups.
+            cir.setReturnValue(this.resolver.resolve(serverAddress));
         }
     }
 
