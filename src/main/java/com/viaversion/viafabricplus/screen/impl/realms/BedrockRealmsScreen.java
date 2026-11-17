@@ -28,7 +28,7 @@ import com.viaversion.viafabricplus.screen.VFPList;
 import com.viaversion.viafabricplus.screen.VFPListEntry;
 import com.viaversion.viafabricplus.screen.VFPScreen;
 import com.viaversion.viafabricplus.util.ConnectionUtil;
-import dev.kastle.netty.channel.nethernet.config.NetherNetAddress;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
 import java.awt.*;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -126,7 +126,7 @@ public final class BedrockRealmsScreen extends VFPScreen {
             try {
                 final RealmsJoinInformation server = service.joinWorld(entry.realmsServer);
                 if (server.getNetworkProtocol().equalsIgnoreCase(RealmsJoinInformation.PROTOCOL_DEFAULT)) {
-                    ConnectionUtil.connect(server.getAddress(), BedrockProtocolVersion.bedrockLatest);
+                    ConnectionUtil.connect(server.getAddress(), BedrockProtocolVersion.BEDROCK_LATEST);
                 } else if (server.getNetworkProtocol().equalsIgnoreCase(RealmsJoinInformation.PROTOCOL_NETHERNET)) {
                     ConnectionUtil.connectNetherNet(new NetherNetAddress(server.getAddress()));
                 } else if (server.getNetworkProtocol().equalsIgnoreCase(RealmsJoinInformation.PROTOCOL_NETHERNET_JSONRPC)) {
