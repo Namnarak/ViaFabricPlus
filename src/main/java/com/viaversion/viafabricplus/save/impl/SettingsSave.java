@@ -102,7 +102,7 @@ public final class SettingsSave extends AbstractSave {
         }
 
         if (name.contains("Bedrock")) { // Always return latest bedrock since the version often changes
-            return BedrockProtocolVersion.bedrockLatest;
+            return BedrockProtocolVersion.BEDROCK_LATEST;
         } else {
             return ProtocolVersion.getClosest(name);
         }
