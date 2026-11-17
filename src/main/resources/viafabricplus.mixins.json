@@ -16,6 +16,7 @@
     "base.connection.MixinMinecraft",
     "base.connection.MixinServerStatusPinger",
     "base.connection.bedrock.MixinConnection",
+    "base.connection.bedrock.MixinConnection_1",
     "base.connection.bedrock.MixinConnectScreen_1",
     "base.connection.bedrock.MixinEventLoopGroupHolder",
     "base.connection.bedrock.MixinServerAddress",
