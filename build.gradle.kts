@@ -77,8 +77,8 @@ fun configureBedrockDependencies() {
 
 fun Project.configureVVDependencies(configuration: String) {
     dependencies {
-        configuration("com.viaversion:viaversion-common:5.12.0-SNAPSHOT")
-        configuration("com.viaversion:viabackwards-common:5.12.0-SNAPSHOT")
+        configuration("com.viaversion:viaversion-common:${property("viaversion_version")}")
+        configuration("com.viaversion:viabackwards-common:${property("viabackwards_version")}")
         configuration("com.viaversion:viaaprilfools-common:4.2.3-SNAPSHOT")
         configuration("net.raphimc:ViaLegacy:3.1.0-SNAPSHOT")
         configuration("net.raphimc:ViaBedrock:0.0.29-SNAPSHOT") {
