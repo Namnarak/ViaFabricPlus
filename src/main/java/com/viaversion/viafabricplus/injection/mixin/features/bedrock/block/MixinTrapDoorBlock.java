@@ -71,7 +71,7 @@ public abstract class MixinTrapDoorBlock extends HorizontalDirectionalBlock {
 
     @Redirect(method = "getShape", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/TrapDoorBlock;SHAPES:Ljava/util/Map;"))
     private Map<Direction, VoxelShape> changeOutlineShape() {
-        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             return viaFabricPlus$shape_bedrock;
         }
         return SHAPES;
@@ -79,7 +79,7 @@ public abstract class MixinTrapDoorBlock extends HorizontalDirectionalBlock {
 
     @Override
     public VoxelShape getOcclusionShape(BlockState state) {
-        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             return SHAPES.get(state.getValue(OPEN) ? state.getValue(FACING) : (state.getValue(HALF) == Half.TOP ? Direction.DOWN : Direction.UP));
         } else {
             return super.getOcclusionShape(state);
