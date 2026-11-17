@@ -60,18 +60,15 @@ includeTransitiveJijDependencies()
 
 fun configureBedrockDependencies() {
     dependencies {
-        jij("net.raphimc:MinecraftAuth:5.0.1") {
+        jij("net.raphimc:MinecraftAuth:5.0.2") {
             exclude(group = "com.google.code.gson", module = "gson")
         }
-        jij("dev.kastle.netty:netty-transport-raknet:1.7.0") {
+        jij("org.cloudburstmc.netty:netty-transport-nethernet:2.0.0.CR6-20261030.131938-23") {
             exclude(group = "io.netty")
+            exclude(group = "org.bouncycastle")
+            exclude(group = "dev.opencollab", module = "libdatachannel-java")
         }
-        jij("dev.kastle.netty:netty-transport-nethernet:1.7.0") {
-            exclude(group = "io.netty")
-        }
-        arrayOf("windows-x86_64", "windows-aarch64", "linux-x86_64", "linux-aarch64", "macos-aarch64").forEach {
-            jij("dev.kastle.webrtc:webrtc-java:1.0.3:$it")
-        }
+        jij("dev.opencollab:libdatachannel-java-arch-detect:0.24.6.0-20261029.091642-10")
     }
 }
 
@@ -81,7 +78,7 @@ fun Project.configureVVDependencies(configuration: String) {
         configuration("com.viaversion:viabackwards-common:${property("viabackwards_version")}")
         configuration("com.viaversion:viaaprilfools-common:4.2.3-SNAPSHOT")
         configuration("net.raphimc:ViaLegacy:3.1.0-SNAPSHOT")
-        configuration("net.raphimc:ViaBedrock:0.0.29-SNAPSHOT") {
+        configuration("net.raphimc:ViaBedrock:0.0.32-20261030.114258-1") {
             exclude(group = "com.mojang", module = "brigadier")
             exclude(group = "at.yawk.lz4", module = "lz4-java")
             exclude(group = "io.netty")
