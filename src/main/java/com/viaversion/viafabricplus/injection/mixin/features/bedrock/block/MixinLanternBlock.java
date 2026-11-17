@@ -67,14 +67,14 @@ public abstract class MixinLanternBlock extends Block {
 
     @Inject(method = "getShape", at = @At("RETURN"), cancellable = true)
     private void modifyCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
-        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             cir.setReturnValue(state.getValue(HANGING) ? viaFabricPlus$shape_hanging_bedrock : viaFabricPlus$shape_bedrock);
         }
     }
 
     @Override
     public VoxelShape getOcclusionShape(BlockState state) {
-        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             return state.getValue(HANGING) ? SHAPE_HANGING : SHAPE_STANDING;
         } else {
             return super.getOcclusionShape(state);
