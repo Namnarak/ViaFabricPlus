@@ -48,7 +48,7 @@ public abstract class MixinConnectScreen_1 {
     private void setupBedrockAccount(CallbackInfo ci, @Local Connection clientConnection) throws IOException {
         final UserConnection connection = ((IConnection) clientConnection).viaFabricPlus$getUserConnection();
 
-        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             final BedrockAuthManager bedrockSession = SaveManager.INSTANCE.getAccountsSave().getBedrockAccount();
             if (bedrockSession != null) {
                 final MinecraftMultiplayerToken multiplayerToken = bedrockSession.getMinecraftMultiplayerToken().refresh();
