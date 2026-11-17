@@ -24,7 +24,7 @@ package com.viaversion.viafabricplus.util;
 import com.viaversion.viafabricplus.injection.access.base.bedrock.IServerAddress;
 import com.viaversion.viafabricplus.injection.access.base.IServerData;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import dev.kastle.netty.channel.nethernet.config.NetherNetAddress;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConnectScreen;
 import net.minecraft.client.multiplayer.ServerData;
@@ -56,7 +56,7 @@ public final class ConnectionUtil {
         ((IServerAddress) (Object) serverAddress).viaFabricPlus$setNetherNetAddress(address);
 
         final ServerData entry = new ServerData("Bedrock Realm " + address.getNetworkId(), serverAddress.getHost(), ServerData.Type.OTHER);
-        ((IServerData) entry).viaFabricPlus$forceVersion(BedrockProtocolVersion.bedrockLatest);
+        ((IServerData) entry).viaFabricPlus$forceVersion(BedrockProtocolVersion.BEDROCK_LATEST);
 
         ConnectScreen.startConnecting(Minecraft.getInstance().screen, Minecraft.getInstance(), serverAddress, entry, false, null);
     }
