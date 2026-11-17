@@ -37,7 +37,7 @@ public abstract class MixinLocalPlayer {
 
     @Redirect(method = {"shouldStopRunSprinting", "canStartSprinting"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isSprintingPossible(Z)Z"))
     private boolean allowNonSwimWaterSprinting(LocalPlayer instance, boolean allowTouchingWater) {
-        return this.isSprintingPossible(allowTouchingWater || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) && (instance.isSwimming() || instance.onGround()));
+        return this.isSprintingPossible(allowTouchingWater || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST) && (instance.isSwimming() || instance.onGround()));
     }
 
 }
