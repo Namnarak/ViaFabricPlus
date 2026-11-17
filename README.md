@@ -1,63 +1,39 @@
-<!--suppress HtmlDeprecatedAttribute -->
-<div align="center">
-  <img src="https://raw.githubusercontent.com/ViaVersion/ViaFabricPlus/main/src/main/resources/assets/viafabricplus/icon.png" width="150" alt="ViaFabricPlus logo">
-  <h1>ViaFabricPlus</h1>
-  <a href="https://fabricmc.net"><img src="https://img.shields.io/badge/Mod%20Loader-Fabric-lightyellow?logo=fabric" alt="Mod Loader: Fabric"></a>
-  <img src="https://img.shields.io/badge/Environment-Client-purple" alt="Environment: Client">
-  <a href="https://discord.gg/viaversion"><img src="https://img.shields.io/discord/316206679014244363?color=0098DB&label=Discord&logo=discord&logoColor=0098DB" alt="Discord"></a><br/>
-  <a href="https://modrinth.com/mod/viafabricplus"><img src="https://img.shields.io/badge/dynamic/json?color=158000&label=downloads&prefix=+%20&query=downloads&url=https://api.modrinth.com/v2/project/rIC2XJV4&logo=modrinth" alt="Modrinth Downloads"></a>
-  <a href="https://curseforge.com/minecraft/mc-mods/viafabricplus"><img src="https://cf.way2muchnoise.eu/full_830604_downloads.svg" alt="CurseForge Downloads"></a>
-  <a href="https://github.com/ViaVersion/ViaFabricPlus/actions/workflows/build.yml"><img src="https://github.com/ViaVersion/ViaFabricPlus/actions/workflows/build.yml/badge.svg?branch=main" alt="Build Status"></a>
+# ViaFabricPlus Legacy
 
-  <p><strong>Minecraft Fabric mod that allows you to join <em>every</em> Minecraft server version (Classic, Alpha, Beta, Release, April Fools, Bedrock)</strong></p>
-</div>
+A community-maintained legacy client line based on upstream ViaFabricPlus 4.4.15.
 
-**ViaFabricPlus** is a Minecraft mod for [Fabric](https://fabricmc.net/) that builds on
-the [ViaVersion plugin](https://github.com/ViaVersion/ViaVersion).
-It lets you connect to servers from almost every Minecraft version while fixing issues that the original project
-couldn't.
+## Target
 
-These fixes make older servers feel much closer to how they originally played, with improvements to movement, block and
-entity interactions, graphics, and more. In short, it recreates the classic Minecraft experience on today's client.
+- **Minecraft client:** 1.21.11
+- **Mod loader:** Fabric
+- **Java:** 21+
+- **Modern Java server translation:** up to 26.3 through ViaVersion + ViaBackwards 5.12.2
+- **Legacy servers:** keeps the legacy protocol support from ViaFabricPlus (Release, Beta, Alpha, Classic and April Fools, subject to upstream translator coverage)
 
-## Important to know
+This branch keeps Minecraft 1.21.11 as the native game client. It does not turn the client into Minecraft 26.3; ViaBackwards translates the 1.21.11 client protocol when connecting to newer servers.
 
-- Works **only with the newest Minecraft client version**
-- Runs **only on [Fabric](https://fabricmc.net/)**. (There won't be a Forge or NeoForge version)
-- **Multiplayer only** – it does not affect singleplayer worlds
-- **Clientside only** - it does not run on Multiplayer servers
-- **No cross-version resource packs** – resource packs from older versions are not supported
-- If you want to play using **older Minecraft clients**, you should use the original [ViaFabric](https://viaversion.com/fabric) instead.
-  For a detailed comparison between the two projects, check out the [ViaFabric vs ViaFabricPlus section](https://github.com/ViaVersion/ViaFabric?tab=readme-ov-file#differences-with-viafabricplus).
+## Build
 
-## How to use
+Use the **Build** workflow on this branch. The workflow uploads the remapped mod JAR as the `Artifacts` artifact.
 
-- [Step-by-step installation and usage guide](docs/USAGE.md)
-- Found a bug? Please report it on the [issue tracker](https://github.com/ViaVersion/ViaFabricPlus/issues)
-- Got questions? Join the [ViaVersion Discord](https://discord.gg/viaversion)
+For a local build:
 
-### Supported Server versions
+```bash
+./gradlew build
+```
 
-- Release (1.0.0 - 26.1)
-- Beta (b1.0 - b1.8.1)
-- Alpha (a1.0.15 - a1.2.6)
-- Classic (c0.0.15 - c0.30 including [CPE](https://wiki.vg/Classic_Protocol_Extension))
-- April Fools (3D Shareware, 20w14infinite, 25w14craftmine)
-- Combat Snapshots (Combat Test 8c)
-- Bedrock Edition 1.26.0 ([Some features are missing](https://github.com/RaphiMC/ViaBedrock#features))
+Install the resulting JAR in a Minecraft 1.21.11 Fabric instance with Java 21 or newer.
 
-## For Developers & Contributors
+## Bedrock Edition
 
-- [Contribution guide & dev setup](CONTRIBUTING.md)
-- [API docs & integration examples](docs/DEVELOPER_API.md)
+Bedrock support is already integrated in the ViaFabricPlus 4.4.15 code line through its bundled ViaBedrock integration. For this legacy client branch, install **ViaFabricPlus Legacy only**; do not install the separate ViaFabricPlus Bedrock addon.
 
-## Credits
+The separate addon branch in this fork documents that compatibility boundary. Its current upstream code targets ViaFabricPlus 5.1.3+, Minecraft 26.3 and Java 25, and is not binary-compatible with this 1.21.11 line.
 
-Huge thanks to all our [contributors](https://github.com/ViaVersion/ViaFabricPlus/graphs/contributors) who made this
-project possible.
+## Maintenance
 
-## Disclaimer
+- Base: upstream ViaFabricPlus `ver/1.21.11`
+- Translation libraries: ViaVersion 5.12.2 and ViaBackwards 5.12.2
+- Custom branch: `legacy/1.21.11-26.3`
 
-We cannot guarantee this mod will be allowed on every server.
-Some servers may treat it as suspicious and flag it with anti-cheat plugins.
-**Use responsibly and at your own risk!**
+This is an independent community fork and is not an official ViaVersion release.
