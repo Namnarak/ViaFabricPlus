@@ -14,6 +14,12 @@ allprojects {
     repositories {
         // Keep them in sync with docs/DEVELOPER_API.md
         maven("https://repo.viaversion.com")
+        maven("https://repo.opencollab.dev/maven-snapshots") {
+            content {
+                includeGroupByRegex("org\\.cloudburstmc\\..+")
+                includeGroup("dev.opencollab")
+            }
+        }
         maven("https://maven.lenni0451.net/everything")
         maven("https://maven.terraformersmc.com/releases")
         maven("https://jitpack.io") {
