@@ -26,9 +26,9 @@ Install the resulting JAR in a Minecraft 1.21.11 Fabric instance with Java 21 or
 
 ## Bedrock Edition
 
-Bedrock support is already integrated in the ViaFabricPlus 4.4.15 code line through its bundled ViaBedrock integration. For this legacy client branch, install **ViaFabricPlus Legacy only**; do not install the separate ViaFabricPlus Bedrock addon.
+This branch upgrades the bundled Bedrock stack to **ViaBedrock 0.0.32 / Bedrock 1.26.60** and the Cloudburst NetherNet transport. Bedrock connections no longer use the old RakNet client pipeline. The 1.21.11-specific hooks cover direct Bedrock host connections, NetherNet LAN/Xbox address schemes, and the refreshed multiplayer identity used by online-mode/Realms flows.
 
-The separate addon branch in this fork documents that compatibility boundary. Its current upstream code targets ViaFabricPlus 5.1.3+, Minecraft 26.3 and Java 25, and is not binary-compatible with this 1.21.11 line.
+Install **ViaFabricPlus Legacy only**; do not install the separate ViaFabricPlus Bedrock addon on top. The standalone addon targets ViaFabricPlus 5.1.3+, Minecraft 26.3 and Java 25 and is not binary-compatible with this 1.21.11 line.
 
 ## Maintenance
 
