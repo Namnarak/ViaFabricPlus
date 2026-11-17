@@ -37,7 +37,7 @@ public abstract class MixinBedBlock {
 
     @Inject(method = "bounceUp", at = @At("HEAD"), cancellable = true)
     private void collisionChanges(Entity entity, CallbackInfo ci) {
-        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             ci.cancel();
 
             Vec3 velocity = entity.getDeltaMovement();
