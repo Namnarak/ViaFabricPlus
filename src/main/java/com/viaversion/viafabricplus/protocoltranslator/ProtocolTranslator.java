@@ -54,7 +54,6 @@ import com.viaversion.viaversion.platform.ViaEncodeHandler;
 import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
 import org.cloudburstmc.netty.channel.nethernet.config.NetherChannelOption;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.flow.FlowControlHandler;
@@ -84,7 +83,6 @@ import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import net.raphimc.vialegacy.netty.PreNettyLengthPrepender;
 import net.raphimc.vialegacy.netty.PreNettyLengthRemover;
-import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption;
 
 public final class ProtocolTranslator {
 
@@ -154,19 +152,10 @@ public final class ProtocolTranslator {
         channel.attr(ProtocolTranslator.TARGET_VERSION_ATTRIBUTE_KEY).set(serverVersion);
 
         if (serverVersion.equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
-            final ChannelConfig config = channel.config();
-            // RakNet config
-            config.setOption(RakChannelOption.RAK_PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION);
-            config.setOption(RakChannelOption.RAK_COMPATIBILITY_MODE, true);
-            config.setOption(RakChannelOption.RAK_CLIENT_INTERNAL_ADDRESSES, 20);
-            config.setOption(RakChannelOption.RAK_TIME_BETWEEN_SEND_CONNECTION_ATTEMPTS_MS, 500);
-            config.setOption(RakChannelOption.RAK_CONNECT_TIMEOUT, config.getOption(ChannelOption.CONNECT_TIMEOUT_MILLIS).longValue());
-            config.setOption(RakChannelOption.RAK_SESSION_TIMEOUT, 30_000L);
-            config.setOption(RakChannelOption.RAK_GUID, ThreadLocalRandom.current().nextLong());
-
-            // NetherNet config
-            config.setOption(NetherChannelOption.NETHER_CLIENT_HANDSHAKE_TIMEOUT_MS, config.getOption(ChannelOption.CONNECT_TIMEOUT_MILLIS));
-            config.setOption(NetherChannelOption.NETHER_CLIENT_MAX_HANDSHAKE_ATTEMPTS, 1);
+            // Bedrock 1.26.60 uses NetherNet transport; RakNet has been removed from the client.
+            channel.config().setOption(NetherChannelOption.NETHER_CLIENT_HANDSHAKE_TIMEOUT_MS,
+                channel.config().getOption(ChannelOption.CONNECT_TIMEOUT_MILLIS));
+            channel.config().setOption(NetherChannelOption.NETHER_CLIENT_MAX_HANDSHAKE_ATTEMPTS, 1);
         }
 
         final UserConnection user = ViaChannelInitializer.createUserConnection(channel, true);
