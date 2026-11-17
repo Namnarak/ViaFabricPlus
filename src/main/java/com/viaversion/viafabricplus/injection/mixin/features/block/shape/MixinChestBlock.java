@@ -86,7 +86,7 @@ public abstract class MixinChestBlock extends AbstractChestBlock<ChestBlockEntit
     private void changeOutlineShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
         if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_2)) {
             cir.setReturnValue(Shapes.block());
-        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             cir.setReturnValue(switch (state.getValue(TYPE)) {
                 case SINGLE -> viaFabricPlus$single_chest_shape_bedrock;
                 case LEFT, RIGHT -> viaFabricPlus$double_chest_shapes_bedrock.get(getConnectedDirection(state));
@@ -97,7 +97,7 @@ public abstract class MixinChestBlock extends AbstractChestBlock<ChestBlockEntit
     @Override
     public VoxelShape getOcclusionShape(BlockState state) {
         if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_2)
-            || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             if (state.getValue(ChestBlock.TYPE) == ChestType.SINGLE) {
                 return SHAPE;
             } else {
