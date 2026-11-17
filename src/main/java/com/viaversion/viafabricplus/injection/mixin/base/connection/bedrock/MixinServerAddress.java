@@ -23,6 +23,8 @@ package com.viaversion.viafabricplus.injection.mixin.base.connection.bedrock;
 
 import com.viaversion.viafabricplus.base.bedrock.NetherNetAddressParser;
 import com.viaversion.viafabricplus.injection.access.base.bedrock.IServerAddress;
+import com.viaversion.viafabricplus.protocoltranslator.ProtocolTranslator;
+import com.viaversion.viafabricplus.settings.impl.BedrockSettings;
 import java.net.SocketAddress;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,6 +39,11 @@ public abstract class MixinServerAddress implements IServerAddress {
     @Inject(method = "parseString", at = @At("HEAD"), cancellable = true)
     private static void parseNetherNetAddress(final String input, final CallbackInfoReturnable<ServerAddress> cir) {
         if (input == null) {
+            return;
+        }
+        final String withBedrockDefaultPort = BedrockSettings.replaceDefaultPort(input, ProtocolTranslator.getTargetVersion());
+        if (!withBedrockDefaultPort.equals(input)) {
+            cir.setReturnValue(ServerAddress.parseString(withBedrockDefaultPort));
             return;
         }
         final SocketAddress netherNetAddress = NetherNetAddressParser.parse(input);
