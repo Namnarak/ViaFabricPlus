@@ -52,7 +52,7 @@ import com.viaversion.viaversion.platform.ViaChannelInitializer;
 import com.viaversion.viaversion.platform.ViaDecodeHandler;
 import com.viaversion.viaversion.platform.ViaEncodeHandler;
 import com.viaversion.viaversion.protocol.ProtocolPipelineImpl;
-import dev.kastle.netty.channel.nethernet.config.NetherChannelOption;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherChannelOption;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelOption;
@@ -153,7 +153,7 @@ public final class ProtocolTranslator {
         channel.attr(ProtocolTranslator.CLIENT_CONNECTION_ATTRIBUTE_KEY).set(connection);
         channel.attr(ProtocolTranslator.TARGET_VERSION_ATTRIBUTE_KEY).set(serverVersion);
 
-        if (serverVersion.equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (serverVersion.equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             final ChannelConfig config = channel.config();
             // RakNet config
             config.setOption(RakChannelOption.RAK_PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION);
@@ -182,7 +182,7 @@ public final class ProtocolTranslator {
             // ViaLegacy
             pipeline.addBefore(HandlerNames.SPLITTER, PreNettyLengthPrepender.NAME, new PreNettyLengthPrepender(user));
             pipeline.addBefore(HandlerNames.PREPENDER, PreNettyLengthRemover.NAME, new PreNettyLengthRemover(user));
-        } else if (serverVersion.equals(BedrockProtocolVersion.bedrockLatest)) {
+        } else if (serverVersion.equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             // ViaBedrock
             pipeline.addBefore(HandlerNames.SPLITTER, DisconnectHandler.NAME, new DisconnectHandler());
             pipeline.addBefore(HandlerNames.SPLITTER, MessageCodec.NAME, new MessageCodec());
@@ -274,7 +274,7 @@ public final class ProtocolTranslator {
     }
 
     private static void changeBedrockProtocolName() {
-        final ProtocolVersion bedrockLatest = RStream.of(BedrockProtocolVersion.class).fields().by("bedrockLatest").get();
+        final ProtocolVersion bedrockLatest = RStream.of(BedrockProtocolVersion.class).fields().by("BEDROCK_LATEST").get();
 
         final FieldWrapper name = RStream.of(bedrockLatest).withSuper().fields().by("name");
         name.set(name.get() + " (Work in progress)");
