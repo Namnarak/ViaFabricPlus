@@ -22,7 +22,7 @@
 package com.viaversion.viafabricplus.injection.mixin.base.connection.bedrock;
 
 import com.viaversion.viafabricplus.injection.access.base.bedrock.IServerAddress;
-import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
+import java.net.SocketAddress;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,15 +31,15 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class MixinServerAddress implements IServerAddress {
 
     @Unique
-    private NetherNetAddress viaFabricPlus$netherNetAddress;
+    private SocketAddress viaFabricPlus$netherNetAddress;
 
     @Override
-    public NetherNetAddress viaFabricPlus$getNetherNetAddress() {
+    public SocketAddress viaFabricPlus$getNetherNetAddress() {
         return this.viaFabricPlus$netherNetAddress;
     }
 
     @Override
-    public void viaFabricPlus$setNetherNetAddress(final NetherNetAddress address) {
+    public void viaFabricPlus$setNetherNetAddress(final SocketAddress address) {
         this.viaFabricPlus$netherNetAddress = address;
     }
 
