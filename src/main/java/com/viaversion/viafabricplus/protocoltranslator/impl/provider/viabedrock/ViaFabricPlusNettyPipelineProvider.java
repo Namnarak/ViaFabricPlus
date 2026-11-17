@@ -26,15 +26,13 @@ import io.netty.channel.Channel;
 import javax.crypto.SecretKey;
 import net.minecraft.network.HandlerNames;
 import net.raphimc.viabedrock.netty.CompressionCodec;
-import net.raphimc.viabedrock.netty.raknet.AesEncryptionCodec;
-import net.raphimc.viabedrock.netty.raknet.MessageCodec;
 import net.raphimc.viabedrock.protocol.data.enums.bedrock.generated.PacketCompressionAlgorithm;
 import net.raphimc.viabedrock.protocol.provider.NettyPipelineProvider;
 
 public final class ViaFabricPlusNettyPipelineProvider extends NettyPipelineProvider {
 
     @Override
-    public void enableCompression(UserConnection user, PacketCompressionAlgorithm preferredCompressionAlgorithm, int threshold) {
+    public void enableCompression(final UserConnection user, final PacketCompressionAlgorithm preferredCompressionAlgorithm, final int threshold) {
         final Channel channel = user.getChannel();
         if (!channel.pipeline().names().contains(HandlerNames.COMPRESS)) {
             channel.pipeline().addBefore(HandlerNames.SPLITTER, HandlerNames.COMPRESS, new CompressionCodec(preferredCompressionAlgorithm, threshold));
@@ -44,19 +42,8 @@ public final class ViaFabricPlusNettyPipelineProvider extends NettyPipelineProvi
     }
 
     @Override
-    public void enableEncryption(UserConnection user, SecretKey key) {
-        final Channel channel = user.getChannel();
-        if (channel.pipeline().names().contains(HandlerNames.ENCRYPT)) {
-            throw new IllegalStateException("Encryption already enabled");
-        }
-
-        if (channel.pipeline().get(MessageCodec.NAME) != null) { // Only enable encryption for RakNet connections
-            try {
-                channel.pipeline().addAfter(MessageCodec.NAME, HandlerNames.ENCRYPT, new AesEncryptionCodec(key));
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public void enableEncryption(final UserConnection user, final SecretKey key) {
+        // NetherNet handles transport encryption, so no packet encryption handler is required.
     }
 
 }
