@@ -54,7 +54,7 @@ public abstract class MixinHoneyBlock extends Block {
 
     @Inject(method = "entityInside", at = @At("HEAD"), cancellable = true)
     private void applyBedrockHoneyCollision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier handler, boolean bl, CallbackInfo ci) {
-        if (!ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (!ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             return;
         }
 
@@ -69,7 +69,7 @@ public abstract class MixinHoneyBlock extends Block {
 
     @Override
     public void stepOn(final Level world, final BlockPos pos, final BlockState state, final Entity entity) {
-        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             final double absoluteY = Math.abs(entity.getDeltaMovement().y);
             if (absoluteY < 0.1 && !entity.isSteppingCarefully()) {
                 final double frictionFactor = 0.4 + absoluteY * 0.2;
@@ -82,17 +82,17 @@ public abstract class MixinHoneyBlock extends Block {
 
     @Override
     public float getFriction() {
-        return ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) ? 0.8F : super.getFriction();
+        return ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST) ? 0.8F : super.getFriction();
     }
 
     @Override
     public float getSpeedFactor() {
-        return ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) ? 1F : super.getSpeedFactor();
+        return ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST) ? 1F : super.getSpeedFactor();
     }
 
     @Override
     public float getJumpFactor() {
-        return ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest) ? 0.6F : super.getJumpFactor();
+        return ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST) ? 0.6F : super.getJumpFactor();
     }
 
     @Inject(method = {"getOldDeltaY", "getNewDeltaY"}, at = @At("HEAD"), cancellable = true)
