@@ -25,7 +25,6 @@ import com.viaversion.viafabricplus.base.bedrock.NetherNetAddressParser;
 import com.viaversion.viafabricplus.injection.access.base.bedrock.IServerAddress;
 import java.net.SocketAddress;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
-import java.net.SocketAddress;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
