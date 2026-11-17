@@ -58,7 +58,7 @@ public abstract class MixinEnderChestBlock extends BaseEntityBlock {
     private void changeOutlineShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
         if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_2)) {
             cir.setReturnValue(Shapes.block());
-        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             cir.setReturnValue(viaFabricPlus$shape_bedrock);
         }
     }
@@ -66,7 +66,7 @@ public abstract class MixinEnderChestBlock extends BaseEntityBlock {
     @Override
     public VoxelShape getOcclusionShape(BlockState state) {
         if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(LegacyProtocolVersion.r1_4_2)
-            || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             return SHAPE;
         } else {
             return super.getOcclusionShape(state);
