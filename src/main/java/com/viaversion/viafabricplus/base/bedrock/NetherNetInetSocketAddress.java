@@ -21,7 +21,7 @@
 
 package com.viaversion.viafabricplus.base.bedrock;
 
-import dev.kastle.netty.channel.nethernet.config.NetherNetAddress;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
 import java.net.InetSocketAddress;
 
 public final class NetherNetInetSocketAddress extends InetSocketAddress {
