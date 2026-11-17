@@ -21,7 +21,7 @@
 
 package com.viaversion.viafabricplus.injection.access.base.bedrock;
 
-import dev.kastle.netty.channel.nethernet.config.NetherNetAddress;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
 
 public interface IServerAddress {
 
