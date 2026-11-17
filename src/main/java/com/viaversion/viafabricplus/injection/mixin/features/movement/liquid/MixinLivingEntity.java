@@ -85,7 +85,7 @@ public abstract class MixinLivingEntity extends Entity {
     @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getFluidHeight(Lnet/minecraft/tags/TagKey;)D"))
     private double redirectFluidHeight(LivingEntity instance, TagKey<Fluid> tagKey) {
         if ((ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_12_2)
-            || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest))
+            || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST))
             && tagKey == FluidTags.WATER
             && this.isInWater()) {
             return 1;
