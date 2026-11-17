@@ -74,7 +74,7 @@ public abstract class MixinLadderBlock extends Block {
     private Map<Direction, VoxelShape> changeOutlineShape() {
         if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)) {
             return viaFabricPlus$shapes_r1_8_x;
-        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+        } else if (ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             return viaFabricPlus$shapes_bedrock;
         } else {
             return SHAPES;
@@ -84,7 +84,7 @@ public abstract class MixinLadderBlock extends Block {
     @Override
     public VoxelShape getOcclusionShape(BlockState state) {
         if (ProtocolTranslator.getTargetVersion().olderThanOrEqualTo(ProtocolVersion.v1_8)
-            || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.bedrockLatest)) {
+            || ProtocolTranslator.getTargetVersion().equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
             return SHAPES.get(state.getValue(FACING));
         } else {
             return super.getOcclusionShape(state);
