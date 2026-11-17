@@ -75,10 +75,6 @@ import net.minecraft.network.HandlerNames;
 import net.minecraft.util.Util;
 import net.raphimc.viabedrock.ViaBedrockPlatformImpl;
 import net.raphimc.viabedrock.api.BedrockProtocolVersion;
-import net.raphimc.viabedrock.netty.BatchLengthCodec;
-import net.raphimc.viabedrock.netty.DisconnectHandler;
-import net.raphimc.viabedrock.netty.PacketCodec;
-import net.raphimc.viabedrock.netty.raknet.MessageCodec;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.vialegacy.api.LegacyProtocolVersion;
 import net.raphimc.vialegacy.netty.PreNettyLengthPrepender;
@@ -171,13 +167,6 @@ public final class ProtocolTranslator {
             // ViaLegacy
             pipeline.addBefore(HandlerNames.SPLITTER, PreNettyLengthPrepender.NAME, new PreNettyLengthPrepender(user));
             pipeline.addBefore(HandlerNames.PREPENDER, PreNettyLengthRemover.NAME, new PreNettyLengthRemover(user));
-        } else if (serverVersion.equals(BedrockProtocolVersion.BEDROCK_LATEST)) {
-            // ViaBedrock
-            pipeline.addBefore(HandlerNames.SPLITTER, DisconnectHandler.NAME, new DisconnectHandler());
-            pipeline.addBefore(HandlerNames.SPLITTER, MessageCodec.NAME, new MessageCodec());
-            pipeline.replace(HandlerNames.SPLITTER, HandlerNames.SPLITTER, new BatchLengthCodec());
-            pipeline.remove(HandlerNames.PREPENDER);
-            pipeline.addBefore(ViaDecodeHandler.NAME, PacketCodec.NAME, new PacketCodec());
         }
 
         pipeline.addAfter(ViaDecodeHandler.NAME, ProtocolTranslator.VIA_FLOW_CONTROL, new NoReadFlowControlHandler());
