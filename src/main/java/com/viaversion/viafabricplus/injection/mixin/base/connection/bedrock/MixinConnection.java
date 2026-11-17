@@ -34,10 +34,16 @@ import com.viaversion.viafabricplus.protocoltranslator.netty.RakNetPingEncapsula
 import com.viaversion.viafabricplus.save.SaveManager;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import dev.kastle.netty.channel.nethernet.NetherNetChannelFactory;
-import dev.kastle.netty.channel.nethernet.signaling.NetherNetXboxRpcSignaling;
-import dev.kastle.netty.channel.nethernet.signaling.NetherNetXboxSignaling;
-import dev.kastle.webrtc.PeerConnectionFactory;
+import net.raphimc.minecraftauth.bedrock.BedrockAuthManager;
+import net.raphimc.minecraftauth.bedrock.model.MinecraftMultiplayerToken;
+import org.cloudburstmc.netty.channel.nethernet.NetherNetChannelFactory;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherChannelOption;
+import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
+import org.cloudburstmc.netty.channel.nethernet.signaling.NetherNetClientSignaling;
+import org.cloudburstmc.netty.channel.nethernet.signaling.NetherNetHTTPClientSignaling;
+import org.cloudburstmc.netty.channel.nethernet.signaling.NetherNetXboxRpcSignaling;
+import org.cloudburstmc.netty.channel.nethernet.signaling.NetherNetXboxSignaling;
+import org.cloudburstmc.netty.util.nethernet.OperatorIdentity;
 import io.netty.bootstrap.AbstractBootstrap;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -51,7 +57,9 @@ import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.net.InetSocketAddress;
 import net.minecraft.network.Connection;
 import net.minecraft.network.HandlerNames;
@@ -73,20 +81,20 @@ public abstract class MixinConnection extends SimpleChannelInboundHandler<Packet
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
-        if (BedrockProtocolVersion.bedrockLatest.equals(((IConnection) this).viaFabricPlus$getTargetVersion())) { // Call channelActive manually when the channel is registered
+        if (BedrockProtocolVersion.BEDROCK_LATEST.equals(((IConnection) this).viaFabricPlus$getTargetVersion())) { // Call channelActive manually when the channel is registered
             this.channelActive(ctx);
         }
     }
 
     @WrapWithCondition(method = "channelActive", at = @At(value = "INVOKE", target = "Lio/netty/channel/SimpleChannelInboundHandler;channelActive(Lio/netty/channel/ChannelHandlerContext;)V", remap = false))
     private boolean dontCallChannelActiveTwice(SimpleChannelInboundHandler<Packet<?>> instance, ChannelHandlerContext channelHandlerContext) {
-        return !BedrockProtocolVersion.bedrockLatest.equals(((IConnection) this).viaFabricPlus$getTargetVersion());
+        return !BedrockProtocolVersion.BEDROCK_LATEST.equals(((IConnection) this).viaFabricPlus$getTargetVersion());
     }
 
     @Inject(method = "connect", at = @At("HEAD"))
     private static void setTargetVersion(InetSocketAddress inetSocketAddress, EventLoopGroupHolder eventLoopGroupHolder, Connection connection, CallbackInfoReturnable<ChannelFuture> cir, @Local(argsOnly = true) LocalRef<EventLoopGroupHolder> eventLoopGroupHolderRef) {
         final ProtocolVersion targetVersion = ((IConnection) connection).viaFabricPlus$getTargetVersion();
-        if (BedrockProtocolVersion.bedrockLatest.equals(targetVersion) && (eventLoopGroupHolder.channelCls() == KQueueSocketChannel.class || inetSocketAddress instanceof NetherNetInetSocketAddress)) { // RakNet does not support KQueue, switch to NIO. NetherNet requires NIO
+        if (BedrockProtocolVersion.BEDROCK_LATEST.equals(targetVersion) && (eventLoopGroupHolder.channelCls() == KQueueSocketChannel.class || inetSocketAddress instanceof NetherNetInetSocketAddress)) { // RakNet does not support KQueue, switch to NIO. NetherNet requires NIO
             final EventLoopGroupHolder newEventLoopGroupHolder = EventLoopGroupHolder.remote(false);
             ((IEventLoopGroupHolder) newEventLoopGroupHolder).viaFabricPlus$setConnecting(((IEventLoopGroupHolder) eventLoopGroupHolder).viaFabricPlus$isConnecting());
             eventLoopGroupHolderRef.set(newEventLoopGroupHolder);
@@ -95,14 +103,38 @@ public abstract class MixinConnection extends SimpleChannelInboundHandler<Packet
 
     @WrapOperation(method = "connect", at = @At(value = "INVOKE", target = "Lio/netty/bootstrap/Bootstrap;channel(Ljava/lang/Class;)Lio/netty/bootstrap/AbstractBootstrap;", remap = false))
     private static AbstractBootstrap<?, ?> useRakNetChannelFactory(Bootstrap instance, Class<? extends Channel> channelTypeClass, Operation<AbstractBootstrap<Bootstrap, Channel>> original, @Local(argsOnly = true) InetSocketAddress address, @Local(argsOnly = true) Connection clientConnection) {
-        if (BedrockProtocolVersion.bedrockLatest.equals(((IConnection) clientConnection).viaFabricPlus$getTargetVersion())) {
+        if (BedrockProtocolVersion.BEDROCK_LATEST.equals(((IConnection) clientConnection).viaFabricPlus$getTargetVersion())) {
             if (address instanceof NetherNetInetSocketAddress netherNetAddress) {
-                final String authorizationHeader = SaveManager.INSTANCE.getAccountsSave().getBedrockAccount().getMinecraftSession().getUpToDateUnchecked().getAuthorizationHeader();
-                if (netherNetAddress.getNetherNetAddress() instanceof NetherNetJsonRpcAddress) {
-                    return instance.channelFactory(NetherNetChannelFactory.client(new PeerConnectionFactory(), new NetherNetXboxRpcSignaling(authorizationHeader)));
+                final SocketAddress remote = netherNetAddress.getNetherNetAddress();
+                final BedrockAuthManager account = SaveManager.INSTANCE.getAccountsSave().getBedrockAccount();
+                final NetherNetClientSignaling signaling;
+                if (remote instanceof NetherNetAddress) {
+                    if (account == null) {
+                        throw new IllegalStateException("An Xbox account is required for Xbox NetherNet signaling");
+                    }
+                    final String authorizationHeader;
+                    try {
+                        authorizationHeader = account.getMinecraftSession().refresh().getAuthorizationHeader();
+                    } catch (IOException exception) {
+                        throw new IllegalStateException("Could not refresh the Bedrock signaling session", exception);
+                    }
+                    signaling = remote instanceof NetherNetJsonRpcAddress
+                        ? new NetherNetXboxRpcSignaling(authorizationHeader)
+                        : new NetherNetXboxSignaling(authorizationHeader);
                 } else {
-                    return instance.channelFactory(NetherNetChannelFactory.client(new PeerConnectionFactory(), new NetherNetXboxSignaling(authorizationHeader)));
+                    signaling = new NetherNetHTTPClientSignaling();
                 }
+
+                if (account != null) {
+                    try {
+                        final MinecraftMultiplayerToken token = account.getMinecraftMultiplayerToken().refresh();
+                        instance.option(NetherChannelOption.NETHER_CLIENT_IDENTITY,
+                            OperatorIdentity.fromToken(account.getSessionKeyPair(), token.getToken(), "https://authorization.franchise.minecraft-services.net/"));
+                    } catch (IOException exception) {
+                        throw new IllegalStateException("Could not refresh the Bedrock multiplayer identity", exception);
+                    }
+                }
+                return instance.channelFactory(NetherNetChannelFactory.client(signaling));
             } else { // RakNet
                 if (channelTypeClass == NioSocketChannel.class) {
                     channelTypeClass = NioDatagramChannel.class;
@@ -120,7 +152,7 @@ public abstract class MixinConnection extends SimpleChannelInboundHandler<Packet
 
     @WrapOperation(method = "connect", at = @At(value = "INVOKE", target = "Lio/netty/bootstrap/Bootstrap;connect(Ljava/net/InetAddress;I)Lio/netty/channel/ChannelFuture;", remap = false))
     private static ChannelFuture useRakNetPingHandlers(Bootstrap instance, InetAddress inetHost, int inetPort, Operation<ChannelFuture> original, @Local(argsOnly = true) InetSocketAddress address, @Local(argsOnly = true) Connection clientConnection, @Local(argsOnly = true) EventLoopGroupHolder eventLoopGroupHolder) {
-        if (BedrockProtocolVersion.bedrockLatest.equals(((IConnection) clientConnection).viaFabricPlus$getTargetVersion())) {
+        if (BedrockProtocolVersion.BEDROCK_LATEST.equals(((IConnection) clientConnection).viaFabricPlus$getTargetVersion())) {
             if (address instanceof NetherNetInetSocketAddress netherNetAddress) {
                 return instance.connect(netherNetAddress.getNetherNetAddress()).addListeners(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE, (ChannelFutureListener) f -> {
                     if (f.isSuccess()) {
