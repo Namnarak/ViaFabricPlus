@@ -21,19 +21,19 @@
 
 package com.viaversion.viafabricplus.base.bedrock;
 
-import org.cloudburstmc.netty.channel.nethernet.config.NetherNetAddress;
+import java.net.SocketAddress;
 import java.net.InetSocketAddress;
 
 public final class NetherNetInetSocketAddress extends InetSocketAddress {
 
-    private final NetherNetAddress netherNetAddress;
+    private final SocketAddress netherNetAddress;
 
-    public NetherNetInetSocketAddress(final NetherNetAddress netherNetAddress) {
-        super(netherNetAddress.getNetworkId() + ".nethernet.viafabricplus.localhost", 0);
+    public NetherNetInetSocketAddress(final SocketAddress netherNetAddress) {
+        super("nethernet.viafabricplus.localhost", 0);
         this.netherNetAddress = netherNetAddress;
     }
 
-    public NetherNetAddress getNetherNetAddress() {
+    public SocketAddress getNetherNetAddress() {
         return this.netherNetAddress;
     }
 
