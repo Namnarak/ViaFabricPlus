@@ -149,8 +149,8 @@ public final class BedrockSettings extends SettingGroup {
     public static String replaceDefaultPort(final String address, final ProtocolVersion version) {
         // If the default port for this entry should be replaced, check if the address already contains a port
         // We can't just replace vanilla's default port because a bedrock server might be running on the same port
-        if (BedrockSettings.INSTANCE.replaceDefaultPort.getValue() && Objects.equals(version, BedrockProtocolVersion.bedrockLatest) && !address.contains(":")) {
-            return address + ":" + ProtocolConstants.BEDROCK_RAKNET_DEFAULT_PORT;
+        if (BedrockSettings.INSTANCE.replaceDefaultPort.getValue() && Objects.equals(version, BedrockProtocolVersion.BEDROCK_LATEST) && !address.contains(":")) {
+            return address + ":" + ProtocolConstants.BEDROCK_DEFAULT_PORT;
         } else {
             return address;
         }
