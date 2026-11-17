@@ -74,6 +74,9 @@ fun configureBedrockDependencies() {
             exclude(group = "org.bouncycastle")
             exclude(group = "dev.opencollab", module = "libdatachannel-java")
         }
+        jij("org.cloudburstmc.netty:netty-transport-raknet:2.0.0.CR6-20261030.131938-23") {
+            exclude(group = "io.netty")
+        }
         jij("dev.opencollab:libdatachannel-java-arch-detect:0.24.6.0-20261029.091642-10")
     }
 }
